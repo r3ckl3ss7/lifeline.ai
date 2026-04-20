@@ -120,6 +120,12 @@ Run backend:
 python app.py
 ```
 
+Production (Gunicorn + threaded worker):
+
+```bash
+gunicorn -w 1 --threads 8 -b 0.0.0.0:${PORT:-5000} app:app
+```
+
 Backend should be on: `http://localhost:5000`
 
 ---
