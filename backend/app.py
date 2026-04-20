@@ -16,13 +16,28 @@ try:
 except Exception:
     pass
 
+
+def parse_allowed_origins(raw_origins: str):
+    default_origin = "http://localhost:5173"
+    value = (raw_origins or "").strip()
+    if not value:
+        value = default_origin
+    if value == "*":
+        return "*"
+
+    origins = [origin.strip().rstrip("/") for origin in value.split(",") if origin.strip()]
+    return origins or [default_origin]
+
 def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "lifeline-dev-secret")
     app.config["UPLOAD_DIR"] = os.environ.get("UPLOAD_DIR", os.path.join(os.getcwd(), "uploads"))
+    app.config["CORS_ALLOWED_ORIGINS"] = parse_allowed_origins(
+        os.environ.get("FRONTEND_URL", "http://localhost:5173")
+    )
     os.makedirs(app.config["UPLOAD_DIR"], exist_ok=True)
 
-    CORS(app, supports_credentials=True)
+    CORS(app, supports_credentials=True, origins=app.config["CORS_ALLOWED_ORIGINS"])
 
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(incidents_bp, url_prefix="/api/incidents")
@@ -40,7 +55,7 @@ def create_app():
     return app
 
 app = create_app()
-socketio.init_app(app, cors_allowed_origins="*")
+socketio.init_app(app, cors_allowed_origins=app.config["CORS_ALLOWED_ORIGINS"])
 
 if __name__ == "__main__":
     socketio.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", "5000")), debug=True)

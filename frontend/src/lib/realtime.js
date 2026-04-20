@@ -1,7 +1,6 @@
 import { io } from "socket.io-client";
 import { ensureGuestId, getSession } from "./session";
-
-const API_BASE = "http://localhost:5000";
+import { API_BASE } from "./config";
 
 let socket = null;
 let sessionListenerAttached = false;

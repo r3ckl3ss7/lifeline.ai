@@ -25,8 +25,8 @@ Key flows (routes in `frontend/src/router.jsx`):
 - `/guidance/:incidentId` → Displays AI-generated severity + steps + voice/TTS + chatbot overlay
 - `/responder` → Responder console (official/volunteer) with real-time alerts
 
-Frontend talks to the backend at:
-- `http://localhost:5000` (hardcoded in `frontend/src/lib/api.js`)
+Frontend talks to the backend using:
+- `VITE_API_BASE` from `frontend/.env` (default fallback: `http://localhost:5000`)
 
 ### Backend (Flask + Socket.IO + CV + Groq)
 Located in `backend/`.
@@ -109,6 +109,7 @@ cp .env.example .env
 Example `.env` fields:
 - `SECRET_KEY`
 - `PORT` (default 5000)
+- `FRONTEND_URL` (default `http://localhost:5173`, used for CORS + Socket.IO origin checks)
 - `GROQ_API_KEY` (optional but enables LLM)
 - `GROQ_MODEL` (default in repo: `llama-3.3-70b-versatile`)
 - `UPLOAD_DIR` (default: `uploads`)
@@ -128,6 +129,7 @@ Backend should be on: `http://localhost:5000`
 ```bash
 cd frontend
 npm install
+cp .env.example .env
 npm run dev
 ```
 

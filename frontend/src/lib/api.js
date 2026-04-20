@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:5000";
+import { API_BASE } from "./config";
 
 async function jsonFetch(path, { method = "GET", body, token } = {}) {
   const headers = { "Content-Type": "application/json" };
